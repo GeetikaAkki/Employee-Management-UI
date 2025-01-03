@@ -1,9 +1,10 @@
-import {React, useState} from 'react'
-import { createDepartment } from '../services/DepartmentService';
-import { useNavigate } from 'react-router-dom';
+import {React, useState, useEffect} from 'react'
+import { createDepartment, getDepartmentById } from '../services/DepartmentService';
+import { useNavigate, useParams } from 'react-router-dom';
 const DepartmentComponent = () => {
     const [departmentName, setDepartmentName]=useState('')
     const [departmentDescription, setDepartmentDescription]=useState('')
+    const {id}=useParams();
     const navigator=useNavigate();
     function saveDepartment(e){
         e.preventDefault();
@@ -18,12 +19,33 @@ const DepartmentComponent = () => {
             console.error(error);
         })
     }
+    function pageTitle(){
+        if(id){
+            return <h2 className='text-center'>Update Department</h2>;
+        } else {
+            return <h2 className='text-center'>Add Department</h2>;
+        }
+    }
+    useEffect(()=>{
+        getDepartmentById(id).then((response)=>{
+            setDepartmentName(response.data.departmentName);
+            setDepartmentDescription(response.data.departmentDescription);
+        }).catch(error=>{
+            console.error(error)
+        })
+    }
+    ,[id]
+    )
+    
+    
   return (
     <div className='container'>
         <br></br>
         <div className='row'>
             <div className='card col-md-6 offset-md-3 offset-md-3'>
-                <h2 className='text-center'>Add Department</h2>
+                {
+                    pageTitle()
+                }
                 <div className='card-body'>
                     <form>
                         <div className='form-group mb-2'>
