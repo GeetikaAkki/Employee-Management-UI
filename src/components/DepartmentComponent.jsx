@@ -1,15 +1,24 @@
 import {React, useState, useEffect} from 'react'
 import { createDepartment, getDepartmentById } from '../services/DepartmentService';
 import { useNavigate, useParams } from 'react-router-dom';
+import { updateDepartment } from '../services/DepartmentService';
 const DepartmentComponent = () => {
     const [departmentName, setDepartmentName]=useState('')
     const [departmentDescription, setDepartmentDescription]=useState('')
     const {id}=useParams();
     const navigator=useNavigate();
-    function saveDepartment(e){
+    function saveOrDepartment(e){
         e.preventDefault();
         const department={ departmentName, departmentDescription}
         console.log(department);
+        if(id){
+            updateDepartment(id,department).then((response)=>{
+                console.log(response.data);
+                navigator('/departments')
+            }).catch(error=>{
+                console.error(error);
+            })
+        } else{
 
         createDepartment(department).then((response)=>{
             console.log(response.data);
@@ -17,7 +26,7 @@ const DepartmentComponent = () => {
 
         }).catch(error=>{
             console.error(error);
-        })
+        })}
     }
     function pageTitle(){
         if(id){
@@ -80,7 +89,7 @@ const DepartmentComponent = () => {
                             
                             </input>
                         </div>
-                        <button onClick={(e)=>saveDepartment(e)}>Submit</button>
+                        <button onClick={(e)=>saveOrDepartment(e)}>Submit</button>
 
 
 
